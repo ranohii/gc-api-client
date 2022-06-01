@@ -1,3 +1,4 @@
+require('dotenv-flow').config();
 import fetch from "node-fetch"
 
 const BASE_CALENDAR_URL = process.env.BASE_CALENDAR_URL_FOR_PUBLIC_HOLIDAY!
