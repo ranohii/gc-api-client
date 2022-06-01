@@ -1,0 +1,32 @@
+{
+  "name": "google-calendar-nodejs-quickstart",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A simple Node.js command-line application that makes requests to the Google Calendar API.",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "npm run build:types && npm run build:js",
+    "build:js": "babel src --out-dir lib --extensions \".ts,.tsx\" --source-maps inline",
+    "build:types": "tsc --emitDeclarationOnly",
+    "start": "node ./lib/main.js",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "npm run type-check -- --watch"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.8.3",
+    "@babel/core": "^7.8.3",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
+    "@types/node": "14.14.25",
+    "dotenv-flow": "^3.2.0",
+    "googleapis": "^39.0.0",
+    "node-fetch": "^3.2.4",
+    "ts-node": "^10.0.0",
+    "typescript": "^3.7.5"
+  },
+  "engines": {
+    "node": ">=6.4.0"
+  }
+}
