@@ -14,13 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {container} from "@/config/inversify.config";
+
 // [START calendar_quickstart]
 require('dotenv-flow').config();
 import * as fs from 'fs';
 import * as readline from 'readline';
 import {google} from 'googleapis';
 import {OAuth2Client} from "google-auth-library/build/src/auth/oauth2client";
-import {DefaultEvent} from "./domain/models/defaultEvent";
+import {CredentialsRepository} from "@/domain/models/credentials/credentialsRepository";
+import {TYPES} from "@/config/types";
+import {TokenRepository} from "@/domain/models/token/tokenRepository";
+import {AccessTokenPromptLauncher} from "@/application/accessTokenPromptLauncher";
+import {PrivateEventRepository} from "@/domain/models/calendarEvent/privateEventRepository";
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
@@ -30,94 +36,28 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
 const TOKEN_PATH = process.env.TOKEN_PATH!;
 const CREDENTIALS_PATH = process.env.CREDENTIALS_PATH!
 
-// Load client secrets from a local file.
-fs.readFile(CREDENTIALS_PATH, (err: any, content: any) => {
-  if (err) return console.log('Error loading client secret file:', err);
-  // Authorize a client with credentials, then call the Google Calendar API.
-  authorize(JSON.parse(content), listEvents);
-});
+const credentialsRepository = container.get<CredentialsRepository>(TYPES.CredentialsRepository);
+const tokenRepository = container.get<TokenRepository>(TYPES.TokenRepository);
 
-/**
- * Create an OAuth2 client with the given credentials, and then execute the
- * given callback function.
- * @param {Object} credentials The authorization client credentials.
- * @param {function} callback The callback to call with the authorized client.
- */
-function authorize(credentials: any, callback: Function) {
-  const {client_secret, client_id, redirect_uris} = credentials.installed;
-  const oAuth2Client = new google.auth.OAuth2(
-      client_id, client_secret, redirect_uris[0]);
-
-  // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, (err , token) => {
-    if (err) return getAccessToken(oAuth2Client, callback);
-    oAuth2Client.setCredentials(JSON.parse(token as unknown as string));
-    callback(oAuth2Client);
-  });
-}
-
-/**
- * Get and store new token after prompting for user authorization, and then
- * execute the given callback with the authorized OAuth2 client.
- * @param {OAuth2Client} oAuth2Client The OAuth2 client to get token for.
- * @param {Function} callback The callback for the authorized client.
- */
-function getAccessToken(oAuth2Client: OAuth2Client, callback: Function) {
-  const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: SCOPES,
-  });
-  console.log('Authorize this app by visiting this url:', authUrl);
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-  rl.question('Enter the code from that page here: ', (code: any) => {
-    rl.close();
-    oAuth2Client.getToken(code, (err, token) => {
-      if (err) return console.error('Error retrieving access token', err);
-      if (!token) return console.error("Token is not defined.");
-      oAuth2Client.setCredentials(token);
-      // Store the token to disk for later program executions
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err: any) => {
-        if (err) return console.error(err);
-        console.log('Token stored to', TOKEN_PATH);
-      });
-      callback(oAuth2Client);
-    });
-  });
-}
-
-/**
- * Lists the next 10 events on the user's primary calendar.
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- */
-function listEvents(auth: OAuth2Client) {
-  const calendar = google.calendar({version: 'v3', auth});
-  calendar.events.list({
-    calendarId: 'primary',
-    timeMin: (new Date()).toISOString(),
-    maxResults: 10,
-    singleEvents: true,
-    orderBy: 'startTime',
-  }, (err: any, res: any) => {
-    if (err) return console.log('The API returned an error: ' + err);
-    const events = res.data.items;
-    if (events.length) {
-      console.log('Upcoming 10 events:');
-      events.map((event: DefaultEvent) => {
-        const start = event.start.dateTime;
-        console.log(`${start} - ${event.summary}`);
-        console.log({event})
-      });
-    } else {
-      console.log('No upcoming events found.');
-    }
-  });
-}
+  (async () => {
+  try {
+    const credentials = await credentialsRepository.read(CREDENTIALS_PATH)
+    const oAuth2Client = new google.auth.OAuth2(credentials.client_id, credentials.client_secret, credentials.redirect_uris[0]);
+    container.bind<OAuth2Client>(TYPES.OAuth2Client).toConstantValue(oAuth2Client);
+    const token = await tokenRepository.read(TOKEN_PATH)
+    oAuth2Client.setCredentials(token.value)
+  } catch (error) {
+    console.log(error)
+    const accessTokenPromptLauncher = container.get<AccessTokenPromptLauncher>(TYPES.AccessTokenPromptLauncher);
+    const token = await accessTokenPromptLauncher.query()
+    await accessTokenPromptLauncher.save(token)
+  } finally {
+    const privateEventRepository = container.get<PrivateEventRepository>(TYPES.PrivateEventRepository);
+    await privateEventRepository.getList(10)
+  }
+})()
 // [END calendar_quickstart]
 
 export {
   SCOPES,
-  listEvents,
 };
