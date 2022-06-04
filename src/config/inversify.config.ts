@@ -10,6 +10,8 @@ import {PrivateEventRepository} from "@/domain/models/calendarEvent/privateEvent
 import {GoogleApisCalendarPrivateEventRepositoryImpl} from "@/infra/persistence/googleApis/googleApisCalendarPrivateEventRepositoryImpl";
 import {HolidayRepository} from "@/domain/models/calendarEvent/holidayRepository";
 import {GoogleApisCalendarHolidayRepositoryImpl} from "@/infra/persistence/googleApis/googleApisCalendarHolidayRepositoryImpl";
+import {DayOffChecker} from "@/application/dayOffChecker";
+import {OAuth2ClientManager} from "@/application/oAuth2ClientManager";
 
 const container = new Container({ defaultScope: "Singleton" });
 
@@ -20,6 +22,8 @@ container.bind<PrivateEventRepository>(TYPES.PrivateEventRepository).to(GoogleAp
 container.bind<HolidayRepository>(TYPES.HolidayRepository).to(GoogleApisCalendarHolidayRepositoryImpl);
 
 // application layer
+container.bind<OAuth2ClientManager>(TYPES.OAuth2ClientManager).to(OAuth2ClientManager);
 container.bind<AccessTokenPromptLauncher>(TYPES.AccessTokenPromptLauncher).to(AccessTokenPromptLauncher);
+container.bind<DayOffChecker>(TYPES.DayOffChecker).to(DayOffChecker);
 
 export { container }

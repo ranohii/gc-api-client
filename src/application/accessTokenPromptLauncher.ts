@@ -4,7 +4,7 @@ import readline from "readline";
 import {inject, injectable} from "inversify";
 import {TYPES} from "@/config/types";
 import {Token} from "@/domain/models/token/token";
-import {SCOPES, TOKEN_PATH} from "@/main";
+import {SCOPES, TOKEN_PATH} from "@/config/googleApis";
 
 @injectable()
 export class AccessTokenPromptLauncher {
