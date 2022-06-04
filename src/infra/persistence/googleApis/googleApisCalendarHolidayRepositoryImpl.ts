@@ -2,8 +2,6 @@ import {HolidayRepository} from "@/domain/models/calendarEvent/holidayRepository
 import {Holiday} from "@/domain/models/calendarEvent/holiday";
 import fetch from "node-fetch";
 import {injectable} from "inversify";
-import {Dayjs} from "dayjs";
-import {DateUtils} from "@/shared/util/DateUtils";
 
 @injectable()
 export class GoogleApisCalendarHolidayRepositoryImpl implements HolidayRepository {
@@ -22,6 +20,7 @@ export class GoogleApisCalendarHolidayRepositoryImpl implements HolidayRepositor
     return new Promise((resolve, reject) => {
       // TODO: error handling.
       this.fetch(this.url).then(response => response.json()).then((data: any) => {
+        if (data.error) return reject(data.error)
         const holidays = data.items.map((item: any) => Holiday.fromPublicEvent(item))
         resolve(holidays)
       })
