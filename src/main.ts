@@ -19,10 +19,10 @@ import {container} from "@/config/inversify.config";
 import {OAuth2ClientManager} from "@/application/oAuth2ClientManager";
 import {DayOffChecker} from "@/application/dayOffChecker";
 
-const oAuth2ClientManager = container.get<OAuth2ClientManager>(TYPES.OAuth2ClientManager);
-
 (async () => {
+  const oAuth2ClientManager = container.get<OAuth2ClientManager>(TYPES.OAuth2ClientManager);
   await oAuth2ClientManager.init()
+  // NOTE: Keep this container.get order because the dependency of dayOffChecker cannot be resolved until oAuth2Client is initialized.
   const dayOffChecker = container.get<DayOffChecker>(TYPES.DayOffChecker);
   const isDayOff = await dayOffChecker.checkToday()
   console.log({isDayOff})
