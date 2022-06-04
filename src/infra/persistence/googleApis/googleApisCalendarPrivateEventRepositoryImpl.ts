@@ -13,6 +13,7 @@ export class GoogleApisCalendarPrivateEventRepositoryImpl implements PrivateEven
     private readonly oAuth2Client: OAuth2Client,
   ) {}
 
+  // NOTE: This method has not been used yet.
   getList(maxResults: number): Promise<any> {
     return new Promise( (resolve, reject) => {
       const calendar = google.calendar({version: 'v3', auth: this.oAuth2Client});
@@ -45,8 +46,8 @@ export class GoogleApisCalendarPrivateEventRepositoryImpl implements PrivateEven
       const calendar = google.calendar({version: 'v3', auth: this.oAuth2Client});
       calendar.events.list({
         calendarId: 'primary',
-        timeMin: start,
-        timeMax: end,
+        timeMin: start + "+09:00",
+        timeMax: end + "+09:00",
         singleEvents: true,
         orderBy: 'startTime',
       }, (err: any, res: any) => {

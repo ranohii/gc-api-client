@@ -30,11 +30,10 @@ export class GoogleApisCalendarHolidayRepositoryImpl implements HolidayRepositor
 
   findByDate(start: string, end: string): Promise<Holiday> {
     return new Promise((resolve, reject) => {
-      const url = `${this.url}&timeMin=${start}&timeMax=${end}`
-      console.log(url)
+      const url = `${this.url}&timeMin=${start}Z&timeMax=${end}Z`
       this.fetch(url).then(response => response.json()).then((data: any) => {
-        console.log(data)
-        if (data.items.length === 0) return reject("Date length is 0: Holiday is not found.")
+        if (data.error) return reject(data.error)
+        if (data.items.length === 0) return reject("No upcoming holidays found.")
         const holiday = Holiday.fromPublicEvent(data.items[0])
         resolve(holiday)
       })

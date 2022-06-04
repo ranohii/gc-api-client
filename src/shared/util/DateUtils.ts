@@ -16,9 +16,9 @@ export class DateUtils {
     return dayjs(value).add(days, "day")
   }
 
-  static getStartAndEndAsString(origin: Dayjs, days: number, template: string = "YYYY-MM-DDT00:00:00[Z]") {
-    const start = DateUtils.format(origin, template)
-    const end = DateUtils.format(DateUtils.addDays(origin, days), template)
+  static getStartAndEndAsString(origin: Dayjs, days: number) {
+    const start = DateUtils.format(origin, "YYYY-MM-DDT00:00:00")
+    const end = DateUtils.format(DateUtils.addDays(origin, days - 1), "YYYY-MM-DDT23:59:59")
     return {
       start,
       end
