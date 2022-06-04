@@ -8,15 +8,18 @@ import {FsTokenRepositoryImpl} from "@/infra/persistence/filesystem/fsTokenRepos
 import {AccessTokenPromptLauncher} from "@/application/accessTokenPromptLauncher";
 import {PrivateEventRepository} from "@/domain/models/calendarEvent/privateEventRepository";
 import {GoogleApisCalendarPrivateEventRepositoryImpl} from "@/infra/persistence/googleApis/googleApisCalendarPrivateEventRepositoryImpl";
+import {HolidayRepository} from "@/domain/models/calendarEvent/holidayRepository";
+import {GoogleApisCalendarHolidayRepositoryImpl} from "@/infra/persistence/googleApis/googleApisCalendarHolidayRepositoryImpl";
 
 const container = new Container({ defaultScope: "Singleton" });
 
 // infra layer
 container.bind<CredentialsRepository>(TYPES.CredentialsRepository).to(FsCredentialsRepositoryImpl);
 container.bind<TokenRepository>(TYPES.TokenRepository).to(FsTokenRepositoryImpl);
+container.bind<PrivateEventRepository>(TYPES.PrivateEventRepository).to(GoogleApisCalendarPrivateEventRepositoryImpl);
+container.bind<HolidayRepository>(TYPES.HolidayRepository).to(GoogleApisCalendarHolidayRepositoryImpl);
 
 // application layer
 container.bind<AccessTokenPromptLauncher>(TYPES.AccessTokenPromptLauncher).to(AccessTokenPromptLauncher);
-container.bind<PrivateEventRepository>(TYPES.PrivateEventRepository).to(GoogleApisCalendarPrivateEventRepositoryImpl);
 
 export { container }

@@ -1,12 +1,10 @@
 import {OAuth2Client} from "google-auth-library/build/src/auth/oauth2client";
 import {TokenRepository} from "@/domain/models/token/tokenRepository";
-import {SCOPES} from "@/main";
 import readline from "readline";
 import {inject, injectable} from "inversify";
 import {TYPES} from "@/config/types";
 import {Token} from "@/domain/models/token/token";
-
-const TOKEN_PATH = process.env.TOKEN_PATH!;
+import {SCOPES, TOKEN_PATH} from "@/main";
 
 @injectable()
 export class AccessTokenPromptLauncher {

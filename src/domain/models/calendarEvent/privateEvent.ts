@@ -1,9 +1,16 @@
-import {Creator, End, Organizer, PublicEvent, Start} from "./publicEvent";
+import {
+  Creator,
+  DefaultEvent,
+  End,
+  Organizer,
+  OriginalStartTime,
+  Reminders, Start
+} from "@/domain/models/calendarEvent/defaultEvent";
+import {DayOffType} from "@/domain/models/calendarEvent/DayOffType";
 
-export class Holiday implements PublicEvent {
+export class PrivateEvent implements DefaultEvent {
   private readonly _created: string;
   private readonly _creator: Creator;
-  private readonly _description: string;
   private readonly _end: End;
   private readonly _etag: string;
   private readonly _eventType: string;
@@ -12,19 +19,18 @@ export class Holiday implements PublicEvent {
   private readonly _id: string;
   private readonly _kind: string;
   private readonly _organizer: Organizer;
+  private readonly _originalStartTime: OriginalStartTime;
+  private readonly _recurringEventId: string;
+  private readonly _reminders: Reminders;
   private readonly _sequence: number;
   private readonly _start: Start;
   private readonly _status: string;
   private readonly _summary: string;
-  private readonly _transparency: string;
   private readonly _updated: string;
-  private readonly _visibility: string;
 
-  constructor(created: string, creator: Creator, description: string, end: End, etag: string, eventType: string, htmlLink: string, iCalUID: string, id: string, kind: string, organizer: Organizer, sequence: number, start: Start, status: string, summary: string, transparency: string, updated: string, visibility: string) {
-    if (description !== "Public holiday") throw new Error("Event Description is invalid: Not public holiday")
+  constructor(created: string, creator: Creator, end: End, etag: string, eventType: string, htmlLink: string, iCalUID: string, id: string, kind: string, organizer: Organizer, originalStartTime: OriginalStartTime, recurringEventId: string, reminders: Reminders, sequence: number, start: Start, status: string, summary: string, updated: string) {
     this._created = created;
     this._creator = creator;
-    this._description = description;
     this._end = end;
     this._etag = etag;
     this._eventType = eventType;
@@ -33,13 +39,14 @@ export class Holiday implements PublicEvent {
     this._id = id;
     this._kind = kind;
     this._organizer = organizer;
+    this._originalStartTime = originalStartTime;
+    this._recurringEventId = recurringEventId;
+    this._reminders = reminders;
     this._sequence = sequence;
     this._start = start;
     this._status = status;
     this._summary = summary;
-    this._transparency = transparency;
     this._updated = updated;
-    this._visibility = visibility;
   }
 
   get created(): string {
@@ -48,10 +55,6 @@ export class Holiday implements PublicEvent {
 
   get creator(): Creator {
     return this._creator;
-  }
-
-  get description(): string {
-    return this._description;
   }
 
   get end(): End {
@@ -86,6 +89,18 @@ export class Holiday implements PublicEvent {
     return this._organizer;
   }
 
+  get originalStartTime(): OriginalStartTime {
+    return this._originalStartTime;
+  }
+
+  get recurringEventId(): string {
+    return this._recurringEventId;
+  }
+
+  get reminders(): Reminders {
+    return this._reminders;
+  }
+
   get sequence(): number {
     return this._sequence;
   }
@@ -102,23 +117,19 @@ export class Holiday implements PublicEvent {
     return this._summary;
   }
 
-  get transparency(): string {
-    return this._transparency;
-  }
-
   get updated(): string {
     return this._updated;
   }
 
-  get visibility(): string {
-    return this._visibility;
+  get isDayOff(): boolean {
+    return this.summary === DayOffType.PAID_LEAVE
+    || this.summary.includes(DayOffType.SUMMER_VACATION)
   }
 
-  static fromPublicEvent(event: PublicEvent): Holiday {
-    return new Holiday(
+  static fromDefaultEvent(event: DefaultEvent): PrivateEvent {
+    return new PrivateEvent(
       event.created,
       event.creator,
-      event.description,
       event.end,
       event.etag,
       event.eventType,
@@ -127,13 +138,14 @@ export class Holiday implements PublicEvent {
       event.id,
       event.kind,
       event.organizer,
+      event.originalStartTime,
+      event.recurringEventId,
+      event.reminders,
       event.sequence,
       event.start,
       event.status,
       event.summary,
-      event.transparency,
       event.updated,
-      event.visibility,
     )
   }
 }

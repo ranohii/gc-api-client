@@ -4,6 +4,7 @@ const TYPES = {
   OAuth2Client: Symbol.for("OAuth2Client"),
   AccessTokenPromptLauncher: Symbol.for("AccessTokenPromptLauncher"),
   PrivateEventRepository: Symbol.for("PrivateEventRepository"),
+  HolidayRepository: Symbol.for("HolidayRepository"),
 };
 
 export { TYPES };
