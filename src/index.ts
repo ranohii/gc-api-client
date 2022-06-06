@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright Google Inc.
+ * Copyright Yudai Hirano.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,19 @@ import {TYPES} from "@/config/types";
 import {container} from "@/config/inversify.config";
 import {OAuth2ClientManager} from "@/application/oAuth2ClientManager";
 import {DayOffChecker} from "@/application/dayOffChecker";
+import {Dayjs} from "dayjs";
+import {DateUtils} from "@/shared/util/DateUtils";
 
-(async () => {
-  const oAuth2ClientManager = container.get<OAuth2ClientManager>(TYPES.OAuth2ClientManager);
-  await oAuth2ClientManager.init()
-  // NOTE: Keep this container.get order because the dependency of dayOffChecker cannot be resolved until oAuth2Client is initialized.
-  const dayOffChecker = container.get<DayOffChecker>(TYPES.DayOffChecker);
-  const isDayOff = await dayOffChecker.checkToday()
-  console.log({isDayOff})
-  if (isDayOff) return console.log("Skipped execution: Today is DayOff.")
-})()
+class GoogleCalendarApiClient {
+  async isDayOff(date: Dayjs = DateUtils.today()) {
+    const oAuth2ClientManager = container.get<OAuth2ClientManager>(TYPES.OAuth2ClientManager);
+    await oAuth2ClientManager.init()
+    // NOTE: Keep this container.get order because the dependency of dayOffChecker cannot be resolved until oAuth2Client is initialized.
+    const dayOffChecker = container.get<DayOffChecker>(TYPES.DayOffChecker);
+    return await dayOffChecker.execute(date)
+  }
+}
+
+const googleCalendarApiClient = new GoogleCalendarApiClient()
+
+export default googleCalendarApiClient

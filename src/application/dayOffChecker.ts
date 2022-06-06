@@ -5,6 +5,7 @@ import {HolidayRepository} from "@/domain/models/calendarEvent/holidayRepository
 import {inject, injectable} from "inversify";
 import {DateUtils} from "@/shared/util/DateUtils";
 import {PrivateEventRepository} from "@/domain/models/calendarEvent/privateEventRepository";
+import {Dayjs} from "dayjs";
 
 @injectable()
 export class DayOffChecker {
@@ -19,9 +20,9 @@ export class DayOffChecker {
     private readonly privateEventRepository: PrivateEventRepository,
   ) {}
 
-  async checkToday(): Promise<boolean> {
+  async execute(date: Dayjs): Promise<boolean> {
     let isDayOff = false
-    const { start, end } = DateUtils.getStartAndEndAsString(DateUtils.today(), 1)
+    const { start, end } = DateUtils.getStartAndEndAsString(date, 1)
     console.log({start,end})
     try {
       try {
