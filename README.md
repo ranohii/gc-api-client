@@ -1,3 +1,9 @@
+# Google Calendar Api Client
+
+This repository is a package that is intended to be used for specific use cases by rewriting the following repository to ddd like.
+
+---
+
 # Google Calendar Node.js Quickstart
 
 Complete the steps described in the [quickstart instructions](
