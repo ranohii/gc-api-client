@@ -1,7 +1,7 @@
 {
   "name": "google-calendar-api-client",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "description": "Client to use google calendar api specifically for a certain use case.",
   "license": "Apache-2.0",
   "main": "lib/index.js",
