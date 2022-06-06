@@ -201,6 +201,3 @@ token.json
 
 # idea
 .idea/
-
-# build files
-lib/
