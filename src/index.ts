@@ -22,15 +22,24 @@ import {Dayjs} from "dayjs";
 import {DateUtils} from "@/shared/util/DateUtils";
 
 class GoogleCalendarApiClient {
-  async isDayOff(date: Dayjs = DateUtils.today()) {
+  private dayOffChecker: DayOffChecker | null = null
+
+  async init() {
     const oAuth2ClientManager = container.get<OAuth2ClientManager>(TYPES.OAuth2ClientManager);
     await oAuth2ClientManager.init()
     // NOTE: Keep this container.get order because the dependency of dayOffChecker cannot be resolved until oAuth2Client is initialized.
-    const dayOffChecker = container.get<DayOffChecker>(TYPES.DayOffChecker);
-    return await dayOffChecker.execute(date)
+    this.dayOffChecker = container.get<DayOffChecker>(TYPES.DayOffChecker);
+  }
+
+  async isDayOff(date: Dayjs = DateUtils.today()): Promise<any> {
+    if (!this.dayOffChecker) {
+      await this.init()
+      return await this.isDayOff(date)
+    }
+    return await this.dayOffChecker.execute(date)
   }
 }
 
-const googleCalendarApiClient = new GoogleCalendarApiClient()
+const gcApiClient = new GoogleCalendarApiClient();
 
-export default googleCalendarApiClient
+export default gcApiClient

@@ -27,13 +27,13 @@ export class DayOffChecker {
     try {
       try {
         const privateEvents = await this.privateEventRepository.findListByDate(start, end)
-        console.log({privateEvents})
+        console.dir(privateEvents)
         isDayOff = privateEvents.some(event => event.isDayOff)
       } catch (error) {
         console.log({error})
       } finally {
         const holiday = await this.holidayRepository.findByDate(start, end)
-        console.log({holiday})
+        console.dir(holiday)
         if (!isDayOff) {
          isDayOff = !!holiday
         }

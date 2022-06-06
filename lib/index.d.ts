@@ -1,6 +1,8 @@
 import { Dayjs } from "dayjs";
 declare class GoogleCalendarApiClient {
-    isDayOff(date?: Dayjs): Promise<boolean>;
+    private dayOffChecker;
+    init(): Promise<void>;
+    isDayOff(date?: Dayjs): Promise<any>;
 }
-declare const googleCalendarApiClient: GoogleCalendarApiClient;
-export default googleCalendarApiClient;
+declare const gcApiClient: GoogleCalendarApiClient;
+export default gcApiClient;
