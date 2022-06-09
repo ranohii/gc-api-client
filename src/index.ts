@@ -40,4 +40,4 @@ class GoogleCalendarApiClient {
   }
 }
 
-export default new GoogleCalendarApiClient();
+export const gcApiClient = new GoogleCalendarApiClient();
