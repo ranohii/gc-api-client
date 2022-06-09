@@ -4,5 +4,5 @@ declare class GoogleCalendarApiClient {
     init(): Promise<void>;
     isDayOff(date?: Dayjs): Promise<any>;
 }
-export declare const gcApiClient: GoogleCalendarApiClient;
-export {};
+declare const gcApiClient: GoogleCalendarApiClient;
+export { gcApiClient };
