@@ -123,7 +123,8 @@ export class PrivateEvent implements DefaultEvent {
 
   get isDayOff(): boolean {
     return this.summary === DayOffType.PAID_LEAVE
-    || this.summary.includes(DayOffType.SUMMER_VACATION)
+    || this.summary.includes(DayOffType.VACATION)
+    || this.summary === DayOffType.ABSENCE
   }
 
   static fromDefaultEvent(event: DefaultEvent): PrivateEvent {

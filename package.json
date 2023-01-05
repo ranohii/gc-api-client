@@ -8,6 +8,11 @@
   "files": [
     "lib"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ranohii/gc-api-client.git",
+    "directory": "lib"
+  },
   "scripts": {
     "build": "npm run clean && npm run build:types && npm run build:js",
     "build:js": "babel src --out-dir lib --extensions \".ts,.tsx\" --source-maps inline",
